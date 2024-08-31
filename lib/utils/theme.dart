@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 ThemeData lightTheme = ThemeData(
-    appBarTheme: const AppBarTheme(surfaceTintColor: Colors.transparent),
+    appBarTheme: const AppBarTheme(surfaceTintColor: Colors.blueGrey),
     textButtonTheme: const TextButtonThemeData(
       style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.black)),
     ),

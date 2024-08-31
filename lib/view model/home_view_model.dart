@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:mqtt_test/services/mqtt_services.dart';
 
 class HomeViewModel extends ChangeNotifier {
@@ -14,9 +14,13 @@ class HomeViewModel extends ChangeNotifier {
   final TextEditingController messageController = TextEditingController();
 
   Future<void> connectToBroker() async {
-    await mqttService.connectToBroker();
-    connectionStatus = mqttService.mqttClient?.connectionStatus?.state ?? MqttConnectionState.disconnected;
-    notifyListeners();
+    if (await _hasInternetConnection()) {
+      await mqttService.connectToBroker();
+      connectionStatus = mqttService.mqttClient?.connectionStatus?.state ?? MqttConnectionState.disconnected;
+      notifyListeners();
+    } else {
+      throw Exception('No internet connection');
+    }
   }
 
   void publishMessageToTopic({
@@ -36,4 +40,9 @@ class HomeViewModel extends ChangeNotifier {
     topicController.clear();
     messageController.clear();
   }
+
+  Future<bool> _hasInternetConnection() async {
+    return await InternetConnectionChecker().hasConnection;
+  }
 }
+

@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_test/utils/constants.dart';
 import 'package:mqtt_test/view%20model/home_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -13,21 +13,27 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MQTT Publisher'),
+        centerTitle: true,
+        title: const Text(
+          'MQTT Publisher',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
               controller: homeViewModel.topicController,
               decoration: const InputDecoration(
                 labelText: 'Topic',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+            kHeight10,
             TextField(
               controller: homeViewModel.messageController,
               decoration: const InputDecoration(
@@ -35,11 +41,14 @@ class Home extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            kHeight10,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('QoS Level'),
+                const Text(
+                  'QoS Level',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 DropdownButton<String>(
                   value: homeViewModel.selectedQoSLevel,
                   items: const [
@@ -55,52 +64,61 @@ class Home extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                if (homeViewModel.topicController.text.isEmpty ||
-                    homeViewModel.messageController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Both Topic and Message fields must be filled!'),
-                    ),
-                  );
-                } else {
-                  homeViewModel.publishMessageToTopic(
-                    topic: homeViewModel.topicController.text,
-                    message: homeViewModel.messageController.text,
-                    qosLevel: int.parse(homeViewModel.selectedQoSLevel),
-                  );
-                  homeViewModel.clearInputFields();
-                }
-              },
-              child: const Text('Publish'),
+            kHeight20,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (homeViewModel.topicController.text.isEmpty ||
+                      homeViewModel.messageController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Both Topic and Message fields must be filled!'),
+                      ),
+                    );
+                  } else {
+                    homeViewModel.publishMessageToTopic(
+                      topic: homeViewModel.topicController.text,
+                      message: homeViewModel.messageController.text,
+                      qosLevel: int.parse(homeViewModel.selectedQoSLevel),
+                    );
+                    homeViewModel.clearInputFields();
+
+                    // Display the SnackBar after publishing
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Message published successfully!'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Publish'),
+              ),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                await homeViewModel.connectToBroker();
-                final connectionMessage = homeViewModel.connectionStatus == MqttConnectionState.connected
-                    ? 'Connected to Broker'
-                    : 'Failed to Connect to Broker';
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(connectionMessage),
-                  ),
-                );
-              },
-              child: const Text('Connect to Broker'),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              homeViewModel.connectionStatus == MqttConnectionState.connected
-                  ? 'Status: Connected to Broker'
-                  : 'Status: Not Connected',
-              style: TextStyle(
-                color: homeViewModel.connectionStatus == MqttConnectionState.connected
-                    ? Colors.green
-                    : Colors.red,
-                fontWeight: FontWeight.bold,
+            kHeight10,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  try {
+                    await homeViewModel.connectToBroker();
+                    final connectionMessage = homeViewModel.connectionStatus == MqttConnectionState.connected
+                        ? 'Connected to Broker'
+                        : 'Failed to Connect to Broker';
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(connectionMessage),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No internet connection. Please check your network settings.'),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Connect to Broker'),
               ),
             ),
           ],
