@@ -103,23 +103,22 @@ class Home extends StatelessWidget {
                 onPressed: () async {
                   try {
                     await homeViewModel.connectToBroker();
-                    if (!context.mounted)
-                      return; // Check if the widget is still mounted
-
+                    if (!context.mounted) {
+                      return;
+                    }
                     final connectionMessage = homeViewModel.connectionStatus ==
                             MqttConnectionState.connected
                         ? 'Connected to Broker'
                         : 'Failed to Connect to Broker';
-
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(connectionMessage),
                       ),
                     );
                   } catch (e) {
-                    if (!context.mounted)
-                      return; // Check if the widget is still mounted
-
+                    if (!context.mounted) {
+                      return; 
+                    }
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
