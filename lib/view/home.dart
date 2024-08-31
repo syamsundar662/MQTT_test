@@ -73,7 +73,8 @@ class Home extends StatelessWidget {
                       homeViewModel.messageController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Both Topic and Message fields must be filled!'),
+                        content: Text(
+                            'Both Topic and Message fields must be filled!'),
                       ),
                     );
                   } else {
@@ -102,25 +103,34 @@ class Home extends StatelessWidget {
                 onPressed: () async {
                   try {
                     await homeViewModel.connectToBroker();
-                    final connectionMessage = homeViewModel.connectionStatus == MqttConnectionState.connected
+                    if (!context.mounted)
+                      return; // Check if the widget is still mounted
+
+                    final connectionMessage = homeViewModel.connectionStatus ==
+                            MqttConnectionState.connected
                         ? 'Connected to Broker'
                         : 'Failed to Connect to Broker';
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(connectionMessage),
                       ),
                     );
                   } catch (e) {
+                    if (!context.mounted)
+                      return; // Check if the widget is still mounted
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('No internet connection. Please check your network settings.'),
+                        content: Text(
+                            'No internet connection. Please check your network settings.'),
                       ),
                     );
                   }
                 },
                 child: const Text('Connect to Broker'),
               ),
-            ),
+            )
           ],
         ),
       ),

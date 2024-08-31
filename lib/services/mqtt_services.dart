@@ -45,11 +45,13 @@ class MQTTService {
     mqttClient?.disconnect();
   }
 
-  Future<void> publishMessage(String topic, String message, int qosLevel) async {
+  Future<void> publishMessage(
+      String topic, String message, int qosLevel) async {
     await connectToBroker();
     log('Publishing message "$message" to topic "$topic" with QoS $qosLevel');
     final payloadBuilder = MqttClientPayloadBuilder();
     payloadBuilder.addString(message);
-    mqttClient!.publishMessage(topic, MqttQos.values[qosLevel], payloadBuilder.payload!);
+    mqttClient!.publishMessage(
+        topic, MqttQos.values[qosLevel], payloadBuilder.payload!);
   }
 }

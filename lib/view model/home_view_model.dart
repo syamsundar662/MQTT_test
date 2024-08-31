@@ -16,7 +16,8 @@ class HomeViewModel extends ChangeNotifier {
   Future<void> connectToBroker() async {
     if (await _hasInternetConnection()) {
       await mqttService.connectToBroker();
-      connectionStatus = mqttService.mqttClient?.connectionStatus?.state ?? MqttConnectionState.disconnected;
+      connectionStatus = mqttService.mqttClient?.connectionStatus?.state ??
+          MqttConnectionState.disconnected;
       notifyListeners();
     } else {
       throw Exception('No internet connection');
@@ -45,4 +46,3 @@ class HomeViewModel extends ChangeNotifier {
     return await InternetConnectionChecker().hasConnection;
   }
 }
-
